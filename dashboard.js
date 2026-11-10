@@ -23,9 +23,14 @@ const indicadorFacebook = document.getElementById("indicadorFacebook");
 const diminuirFonte = document.getElementById("diminuirFonte");
 const aumentarFonte = document.getElementById("aumentarFonte");
 
-const botaoNovaTransmissao = document.getElementById("botaoNovaTransmissao");
 const botaoPausa = document.getElementById("botaoPausa");
 const botaoDesfazer = document.getElementById("botaoDesfazer");
+
+const botaoFontes = document.getElementById("botaoFontes");
+const janelaFontes = document.getElementById("janelaFontes");
+const fecharFontes = document.getElementById("fecharFontes");
+const listaFontes = document.getElementById("listaFontes");
+const fontesVazia = document.getElementById("fontesVazia");
 
 
 /* =====================================
@@ -48,6 +53,9 @@ let facebookConectado = false;
 let tamanhoFonte = 15;
 
 let proximoId = 1;
+
+// Páginas (abas) que já enviaram comentários, indexadas por tabId.
+let fontes = new Map();
 
 
 /* =====================================
@@ -282,10 +290,15 @@ function criarCartao(comentario) {
 
     origem.className = "origem " + comentario.origem;
 
-    origem.textContent =
+    const nomePlataforma =
         comentario.origem === "youtube"
             ? "YouTube"
             : "Facebook";
+
+    origem.title = nomePlataforma;
+    origem.setAttribute("aria-label", nomePlataforma);
+
+    origem.appendChild(criarLogoPlataforma(comentario.origem));
 
 
     /* NOME */
@@ -369,6 +382,19 @@ function criarCartao(comentario) {
     cartao.appendChild(cabecalho);
     cartao.appendChild(texto);
 
+    if (comentario.recebidoEm) {
+
+        const horario = document.createElement("time");
+
+        horario.className = "horario-comentario";
+
+        horario.dateTime = new Date(comentario.recebidoEm).toISOString();
+
+        horario.textContent = formatarDataHora(comentario.recebidoEm);
+
+        cartao.appendChild(horario);
+    }
+
 
     /* BOTÃO VER MAIS DO FACEBOOK */
 
@@ -400,12 +426,158 @@ function criarCartao(comentario) {
 
 
 /* =====================================
+   LOGOS DAS PLATAFORMAS
+===================================== */
+
+const LOGOS_PLATAFORMAS = {
+    youtube: {
+                caminho:
+            "M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"
+    },
+    facebook: {
+                caminho:
+            "M9.101 23.691v-7.98H6.627v-3.667h2.474v-1.58c0-4.085 1.848-5.978 5.858-5.978.401 0 .955.042 1.468.103a8.68 8.68 0 0 1 1.141.195v3.325a8.623 8.623 0 0 0-.653-.036 26.805 26.805 0 0 0-.733-.009c-.707 0-1.259.096-1.675.309a1.686 1.686 0 0 0-.679.622c-.258.42-.374.995-.374 1.752v1.297h3.919l-.386 2.103-.287 1.564h-3.246v8.245C19.396 23.238 24 18.179 24 12.044c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.628 3.874 10.35 9.101 11.647Z"
+    }
+};
+
+function criarLogoPlataforma(origem) {
+
+    const logo = LOGOS_PLATAFORMAS[origem];
+
+    const ns = "http://www.w3.org/2000/svg";
+
+    const svg = document.createElementNS(ns, "svg");
+
+    svg.setAttribute("viewBox", "0 0 24 24");
+    svg.setAttribute("class", "logo-plataforma");
+    svg.setAttribute("aria-hidden", "true");
+
+    const caminho = document.createElementNS(ns, "path");
+
+    caminho.setAttribute("d", logo.caminho);
+    
+    svg.appendChild(caminho);
+
+    return svg;
+}
+
+
+/* =====================================
+   FONTES DOS COMENTÁRIOS
+===================================== */
+
+function registrarFonte(dados, origem) {
+
+    if (typeof dados.tabId !== "number") return;
+
+    const fonte = fontes.get(dados.tabId) || {
+        origem: origem,
+        total: 0
+    };
+
+    fonte.url = dados.urlAba || fonte.url || "";
+    fonte.titulo = dados.tituloAba || fonte.titulo || "";
+    fonte.total++;
+    fonte.ultimoEm = Date.now();
+
+    fontes.set(dados.tabId, fonte);
+
+    if (janelaFontes.open) {
+        renderizarFontes();
+    }
+}
+
+function renderizarFontes() {
+
+    listaFontes.innerHTML = "";
+
+    fontes.forEach(fonte => {
+
+        const item = document.createElement("li");
+        item.className = "item-fonte";
+
+        const logo = criarLogoPlataforma(fonte.origem);
+        logo.classList.add("logo-fonte");
+
+        const dadosFonte = document.createElement("div");
+        dadosFonte.className = "dados-fonte";
+
+        const titulo = document.createElement("strong");
+        titulo.textContent = fonte.titulo || "(sem título)";
+
+        const url = document.createElement("span");
+        url.className = "url-fonte";
+        url.textContent = fonte.url || "(URL indisponível)";
+
+        const detalhe = document.createElement("small");
+        detalhe.textContent =
+            fonte.total + (fonte.total === 1 ? " comentário" : " comentários") +
+            " · último em " + formatarDataHora(fonte.ultimoEm);
+
+        dadosFonte.append(titulo, url, detalhe);
+        item.append(logo, dadosFonte);
+        listaFontes.appendChild(item);
+    });
+
+    fontesVazia.hidden = fontes.size > 0;
+}
+
+function abrirFontes() {
+
+    renderizarFontes();
+
+    janelaFontes.showModal();
+}
+
+
+/* =====================================
+   FORMATAR DATA E HORA
+===================================== */
+
+function formatarDataHora(timestamp) {
+
+    return new Date(timestamp).toLocaleString("pt-BR", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit"
+    });
+}
+
+
+/* =====================================
+   COLUNAS INDEPENDENTES
+   Cada cartão vai para a coluna mais baixa,
+   mantendo o espaçamento uniforme.
+===================================== */
+
+function criarColunas() {
+
+    return [0, 1].map(() => {
+
+        const coluna = document.createElement("div");
+
+        coluna.className = "coluna-comentarios";
+
+        listaComentarios.appendChild(coluna);
+
+        return coluna;
+    });
+}
+
+
+/* =====================================
    ATUALIZAR PAINEL
 ===================================== */
 
 function atualizarPainel() {
 
     listaComentarios.innerHTML = "";
+
+    const colunas = criarColunas();
+    const alturas = [0, 0];
 
     const comentariosVisiveis = comentarios.filter(comentario => {
 
@@ -417,7 +589,11 @@ function atualizarPainel() {
 
         const cartao = criarCartao(comentario);
 
-        listaComentarios.appendChild(cartao);
+        const indice = alturas[0] <= alturas[1] ? 0 : 1;
+
+        colunas[indice].appendChild(cartao);
+
+        alturas[indice] += cartao.offsetHeight;
 
     });
 
@@ -468,6 +644,8 @@ function receberComentario(dados) {
 
     totalRecebidos++;
 
+    registrarFonte(dados, origem);
+
     if (pausado) {
         atualizarContadores();
         return;
@@ -497,6 +675,9 @@ function receberComentario(dados) {
         texto: texto,
 
         origem: origem,
+
+        // Momento em que o painel recebeu o comentário.
+        recebidoEm: Date.now(),
 
         podeExpandir: Boolean(dados.podeExpandir),
 
@@ -733,26 +914,6 @@ function diminuirTamanhoFonte() {
 
 
 /* =====================================
-   NOVA TRANSMISSÃO
-===================================== */
-
-function novaTransmissao() {
-
-    comentarios = [];
-
-    historicoExclusao = [];
-
-    totalRecebidos = 0;
-
-    proximoId = 1;
-
-    pausado = false;
-
-    atualizarPainel();
-}
-
-
-/* =====================================
    CONECTAR BOTÕES
 ===================================== */
 
@@ -764,9 +925,16 @@ diminuirFonte.addEventListener("click", diminuirTamanhoFonte);
 
 aumentarFonte.addEventListener("click", aumentarTamanhoFonte);
 
-botaoNovaTransmissao.addEventListener("click", novaTransmissao);
-
 botaoPausa.addEventListener("click", alternarPausa);
+
+botaoFontes.addEventListener("click", abrirFontes);
+
+fecharFontes.addEventListener("click", () => janelaFontes.close());
+
+janelaFontes.addEventListener("click", (evento) => {
+    // Clique fora da janela fecha.
+    if (evento.target === janelaFontes) janelaFontes.close();
+});
 
 botaoDesfazer.addEventListener("click", desfazerExclusao);
 
