@@ -1,0 +1,164 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Comentários da PES</title>
+
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+
+<body>
+
+    <main class="painel">
+
+        <!-- CABEÇALHO -->
+        <header class="cabecalho">
+
+            <div class="identificacao">
+                <h1>Comentários da PES</h1>
+                <p>Paróquia Espírito Santo</p>
+            </div>
+
+            <button
+                id="botaoNovaTransmissao"
+                class="botao-nova-transmissao"
+                title="Iniciar uma nova transmissão"
+                type="button"
+            >
+                <span>↻</span>
+            </button>
+
+        </header>
+
+
+        <!-- BARRA SUPERIOR -->
+        <section class="barra-superior">
+
+            <div class="controles-plataformas">
+
+                <button
+                    id="botaoYoutube"
+                    class="plataforma youtube"
+                    type="button"
+                >
+                    <span class="icone-youtube">▶</span>
+                    YouTube
+                    <span
+                        class="indicador"
+                        id="indicadorYoutube"
+                    ></span>
+                </button>
+
+                <button
+                    id="botaoFacebook"
+                    class="plataforma facebook"
+                    type="button"
+                >
+                    <span class="icone-facebook">f</span>
+                    Facebook
+                    <span
+                        class="indicador"
+                        id="indicadorFacebook"
+                    ></span>
+                </button>
+
+            </div>
+
+
+            <div class="controle-fonte">
+
+                <button
+                    id="diminuirFonte"
+                    type="button"
+                    title="Diminuir fonte"
+                >
+                    −
+                </button>
+
+                <button
+                    id="aumentarFonte"
+                    type="button"
+                    title="Aumentar fonte"
+                >
+                    +
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- ÁREA DOS COMENTÁRIOS -->
+        <section class="area-comentarios">
+
+            <div
+                id="listaComentarios"
+                class="lista-comentarios"
+            ></div>
+
+            <div
+                id="mensagemVazia"
+                class="mensagem-vazia"
+            >
+                Aguardando novos comentários...
+            </div>
+
+        </section>
+
+
+        <!-- RODAPÉ FIXO -->
+        <footer class="rodape">
+
+            <div class="estatisticas">
+
+                <span>
+                    Recebidos:
+                    <strong id="comentariosRecebidos">0</strong>
+                </span>
+
+                <span>
+                    Exibidos:
+                    <strong id="comentariosExibidos">0</strong>
+                </span>
+
+            </div>
+
+
+            <div class="acoes-rodape">
+
+                <button
+                    id="botaoDesfazer"
+                    class="botao-desfazer"
+                    type="button"
+                    hidden
+                >
+                    Desfazer exclusão
+                </button>
+
+                <button
+                    id="botaoPausa"
+                    class="botao-pausa"
+                    type="button"
+                >
+                    Pausar
+                </button>
+
+            </div>
+
+        </footer>
+
+    </main>
+
+
+    <script src="dashboard.js"></script>
+
+</body>
+</html>

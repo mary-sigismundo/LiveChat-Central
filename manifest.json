@@ -1,0 +1,45 @@
+
+{
+    "manifest_version": 3,
+    "name": "LiveChat Central",
+    "version": "2.3.0",
+    "description": "Reúne comentários de transmissões ao vivo do YouTube e Facebook em um único painel.",
+    "permissions": [
+        "storage",
+        "tabs"
+    ],
+    "host_permissions": [
+        "https://www.youtube.com/*",
+        "https://www.facebook.com/*",
+        "https://m.facebook.com/*"
+    ],
+    "background": {
+        "service_worker": "background.js"
+    },
+    "action": {
+        "default_title": "Abrir LiveChat Central"
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "https://www.youtube.com/*"
+            ],
+            "js": [
+                "youtube.js"
+            ],
+            "run_at": "document_idle",
+            "all_frames": true
+        },
+        {
+            "matches": [
+                "https://www.facebook.com/*",
+                "https://m.facebook.com/*"
+            ],
+            "js": [
+                "facebook.js"
+            ],
+            "run_at": "document_idle",
+            "all_frames": true
+        }
+    ]
+}

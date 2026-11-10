@@ -1,0 +1,525 @@
+
+/* =====================================
+   LIVECHAT CENTRAL
+   Estilo principal do painel
+===================================== */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+    background: #f4f1ed;
+    color: #383838;
+}
+
+/* =====================================
+   ESTRUTURA PRINCIPAL
+===================================== */
+
+.painel {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* =====================================
+   CABEÇALHO
+===================================== */
+
+.cabecalho {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 108px;
+    padding: 16px 70px;
+    background: #ffffff;
+    border-bottom: 1px solid #e8e3dd;
+    flex-shrink: 0;
+}
+
+.identificacao {
+    text-align: center;
+}
+
+.identificacao h1 {
+    font-size: 34px;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+    color: #343b46;
+}
+
+.identificacao p {
+    margin-top: 7px;
+    font-size: 14px;
+    color: #858585;
+}
+
+.botao-nova-transmissao {
+    position: absolute;
+    right: 22px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 11px;
+    background: #e9eef5;
+    color: #536b8a;
+    font-size: 24px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.botao-nova-transmissao:hover {
+    background: #dce5f0;
+}
+
+/* =====================================
+   BARRA DE CONTROLES
+===================================== */
+
+.barra-superior {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 35px;
+    min-height: 62px;
+    padding: 10px 15px;
+    background: #faf9f7;
+    border-bottom: 1px solid #e8e3dd;
+    flex-shrink: 0;
+}
+
+/* YouTube e Facebook */
+
+.controles-plataformas {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
+.plataforma {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border: 1px solid #e3dfda;
+    border-radius: 9px;
+    background: #ffffff;
+    color: #555555;
+    font-size: 13px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+/* Plataforma sem aba aberta: botão inteiro cinza */
+
+.plataforma:has(.indicador.desativado) {
+    background: #e9e7e4;
+    border-color: #d8d5d1;
+    color: #99948e;
+}
+
+.plataforma:has(.indicador.desativado) .icone-youtube,
+.plataforma:has(.indicador.desativado) .icone-facebook {
+    color: #aaa6a1;
+}
+
+.plataforma:has(.indicador.desativado):hover {
+    background: #e2dfdb;
+}
+
+/* Plataforma aberta e ativa */
+
+.plataforma:not(:has(.indicador.desativado)):hover {
+    background: #f1f1f1;
+}
+
+.icone-youtube {
+    color: #e34c4c;
+    font-size: 13px;
+}
+
+.icone-facebook {
+    color: #4778c7;
+    font-size: 17px;
+    font-weight: bold;
+}
+
+.indicador {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #80b99a;
+    flex-shrink: 0;
+}
+
+.indicador.inativo {
+    background: #d96b6b;
+}
+
+.indicador.desativado {
+    background: #c9c5c0;
+}
+
+/* Controle de fonte */
+
+.controle-fonte {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.controle-fonte button {
+    width: 32px;
+    height: 32px;
+    border: 1px solid #e2ddd7;
+    border-radius: 7px;
+    background: #ffffff;
+    color: #555555;
+    font-size: 19px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.controle-fonte button:hover {
+    background: #eeeeee;
+}
+
+/* =====================================
+   ÁREA DOS COMENTÁRIOS
+===================================== */
+
+.area-comentarios {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    padding: 16px 20px;
+}
+
+.lista-comentarios {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-content: start;
+    align-items: start;
+    gap: 13px;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    padding: 3px 5px 13px 3px;
+}
+
+.lista-comentarios::-webkit-scrollbar {
+    width: 7px;
+}
+
+.lista-comentarios::-webkit-scrollbar-thumb {
+    background: #d2ccc5;
+    border-radius: 10px;
+}
+
+.lista-comentarios::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+/* =====================================
+   CARTÕES DE COMENTÁRIOS
+===================================== */
+
+.cartao-comentario {
+    display: block;
+    min-width: 0;
+    padding: 15px 16px;
+    border: 1px solid #e7e2dc;
+    border-radius: 13px;
+    background: #ffffff;
+    box-shadow: 0 3px 9px rgba(55, 48, 40, 0.07);
+    transition: background 0.2s, opacity 0.2s, box-shadow 0.2s;
+}
+
+.cartao-comentario:hover {
+    box-shadow: 0 4px 12px rgba(55, 48, 40, 0.11);
+}
+
+/* Cabeçalho de cada comentário */
+
+.cabecalho-comentario {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 9px;
+    margin-bottom: 11px;
+}
+
+.origem {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    white-space: nowrap;
+    letter-spacing: 0.3px;
+}
+
+.origem.youtube {
+    color: #d84b4b;
+}
+
+.origem.facebook {
+    color: #4778c7;
+}
+
+.nome-comentario {
+    min-width: 0;
+    overflow: hidden;
+    color: #414750;
+    font-size: 14px;
+    font-weight: 700;
+    text-align: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Botões dos comentários */
+
+.acoes-comentario {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
+}
+
+.botao-remover,
+.botao-lido {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 27px;
+    height: 27px;
+    border: none;
+    border-radius: 7px;
+    background: #f2f0ed;
+    color: #777777;
+    font-size: 15px;
+    cursor: pointer;
+    transition: 0.2s;
+    flex-shrink: 0;
+}
+
+.botao-remover:hover {
+    background: #f8dddd;
+    color: #bd4e4e;
+}
+
+.botao-lido:hover {
+    background: #e3eee7;
+    color: #56846a;
+}
+
+/* Texto do comentário */
+
+.texto-comentario {
+    color: #444444;
+    font-size: 15px;
+    line-height: 1.55;
+    overflow-wrap: anywhere;
+}
+
+/* =====================================
+   COMENTÁRIOS LIDOS
+===================================== */
+
+.cartao-comentario.comentario-lido {
+    background: #eeece9;
+    opacity: 0.72;
+}
+
+.cartao-comentario.comentario-lido .texto-comentario {
+    color: #85817d;
+    text-decoration: line-through;
+}
+
+.cartao-comentario.comentario-lido .nome-comentario {
+    color: #85817d;
+}
+
+/* =====================================
+   MENSAGEM VAZIA
+===================================== */
+
+.mensagem-vazia {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 90%;
+    color: #a09a93;
+    font-size: 14px;
+    text-align: center;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+}
+
+/* =====================================
+   RODAPÉ FIXO
+===================================== */
+
+.rodape {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: 58px;
+    padding: 9px 20px;
+    background: #ffffff;
+    border-top: 1px solid #e8e3dd;
+    flex-shrink: 0;
+}
+
+.estatisticas {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 17px;
+    color: #858585;
+    font-size: 12px;
+}
+
+.estatisticas strong {
+    color: #4b5664;
+    font-size: 13px;
+}
+
+.acoes-rodape {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.botao-desfazer,
+.botao-pausa {
+    padding: 8px 13px;
+    border: none;
+    border-radius: 8px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.botao-desfazer {
+    background: #eeeeeb;
+    color: #68645f;
+}
+
+.botao-pausa {
+    background: #e7edf4;
+    color: #506985;
+    font-weight: 600;
+}
+
+.botao-desfazer:hover {
+    background: #e1ded9;
+}
+
+.botao-pausa:hover {
+    background: #dbe4ef;
+}
+
+/* =====================================
+   RESPONSIVIDADE
+===================================== */
+
+@media (max-width: 650px) {
+
+    .cabecalho {
+        min-height: 90px;
+        padding: 10px 55px;
+    }
+
+    .identificacao h1 {
+        font-size: 26px;
+    }
+
+    .identificacao p {
+        font-size: 12px;
+    }
+
+    .botao-nova-transmissao {
+        right: 12px;
+    }
+
+    .barra-superior {
+        gap: 18px;
+        padding: 9px 10px;
+    }
+
+    .area-comentarios {
+        padding: 10px;
+    }
+
+    .lista-comentarios {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 9px;
+    }
+
+    .cartao-comentario {
+        padding: 10px;
+    }
+
+    .cabecalho-comentario {
+        gap: 4px;
+    }
+
+    .nome-comentario {
+        font-size: 11px;
+    }
+
+    .origem {
+        font-size: 9px;
+    }
+
+    .botao-remover,
+    .botao-lido {
+        width: 22px;
+        height: 22px;
+        font-size: 13px;
+    }
+
+    .texto-comentario {
+        font-size: 13px;
+    }
+
+    .rodape {
+        padding: 9px 12px;
+    }
+}
+
+@media (max-width: 390px) {
+
+    .barra-superior {
+        gap: 10px;
+    }
+
+    .plataforma {
+        gap: 5px;
+        padding: 7px 8px;
+        font-size: 11px;
+    }
+
+    .rodape {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .acoes-rodape {
+        width: 100%;
+        justify-content: flex-end;
+    }
+}
