@@ -10,7 +10,7 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>Comentários da PES</title>
+    <title>Comentários da Live – PES</title>
 
     <link rel="stylesheet" href="dashboard.css">
 </head>
@@ -22,19 +22,15 @@
         <!-- CABEÇALHO -->
         <header class="cabecalho">
 
-            <div class="identificacao">
-                <h1>Comentários da PES</h1>
-                <p>Paróquia Espírito Santo</p>
-            </div>
-
-            <button
-                id="botaoNovaTransmissao"
-                class="botao-nova-transmissao"
-                title="Iniciar uma nova transmissão"
-                type="button"
+            <img
+                class="logo-cabecalho"
+                src="https://www.paroquiaespiritosanto.com.br/min/img/logos/logo-preto-horizontal.png"
+                alt="Paróquia Espírito Santo"
             >
-                <span>↻</span>
-            </button>
+
+            <div class="identificacao">
+                <h1>Comentários da Live – PES</h1>
+            </div>
 
         </header>
 
@@ -135,6 +131,15 @@
             <div class="acoes-rodape">
 
                 <button
+                    id="botaoFontes"
+                    class="botao-fontes"
+                    type="button"
+                    title="Ver as páginas que estão enviando comentários"
+                >
+                    Fontes
+                </button>
+
+                <button
                     id="botaoDesfazer"
                     class="botao-desfazer"
                     type="button"
@@ -156,6 +161,31 @@
         </footer>
 
     </main>
+
+
+    <!-- PÁGINAS DE ONDE VÊM OS COMENTÁRIOS -->
+    <dialog id="janelaFontes" class="janela-fontes">
+
+        <div class="janela-fontes-cabecalho">
+            <h2>Páginas enviando comentários</h2>
+
+            <button
+                id="fecharFontes"
+                class="botao-fechar-fontes"
+                type="button"
+                aria-label="Fechar"
+            >
+                ×
+            </button>
+        </div>
+
+        <ul id="listaFontes" class="lista-fontes"></ul>
+
+        <p id="fontesVazia" class="fontes-vazia">
+            Nenhuma página enviou comentários ainda.
+        </p>
+
+    </dialog>
 
 
     <script src="dashboard.js"></script>

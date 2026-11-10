@@ -40,11 +40,21 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 108px;
-    padding: 16px 70px;
+    min-height: 80px;
+    padding: 10px 70px;
     background: #ffffff;
     border-bottom: 1px solid #e8e3dd;
     flex-shrink: 0;
+}
+
+.logo-cabecalho {
+    position: absolute;
+    left: 22px;
+    top: 50%;
+    transform: translateY(-50%);
+    max-height: 44px;
+    max-width: 220px;
+    object-fit: contain;
 }
 
 .identificacao {
@@ -56,32 +66,6 @@ body {
     font-weight: 700;
     letter-spacing: 0.2px;
     color: #343b46;
-}
-
-.identificacao p {
-    margin-top: 7px;
-    font-size: 14px;
-    color: #858585;
-}
-
-.botao-nova-transmissao {
-    position: absolute;
-    right: 22px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 40px;
-    height: 40px;
-    border: none;
-    border-radius: 11px;
-    background: #e9eef5;
-    color: #536b8a;
-    font-size: 24px;
-    cursor: pointer;
-    transition: 0.2s;
-}
-
-.botao-nova-transmissao:hover {
-    background: #dce5f0;
 }
 
 /* =====================================
@@ -209,15 +193,21 @@ body {
 }
 
 .lista-comentarios {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    align-content: start;
-    align-items: start;
+    display: flex;
+    align-items: flex-start;
     gap: 13px;
     width: 100%;
     height: 100%;
     overflow-y: auto;
     padding: 3px 5px 13px 3px;
+}
+
+.coluna-comentarios {
+    display: flex;
+    flex: 1 1 0;
+    flex-direction: column;
+    gap: 13px;
+    min-width: 0;
 }
 
 .lista-comentarios::-webkit-scrollbar {
@@ -270,12 +260,31 @@ body {
     letter-spacing: 0.3px;
 }
 
+.origem {
+    display: flex;
+    align-items: center;
+}
+
+.logo-plataforma {
+    display: block;
+    width: 24px;
+    height: 24px;
+    fill: #9a9a9a;
+}
+
 .origem.youtube {
     color: #d84b4b;
 }
 
 .origem.facebook {
     color: #4778c7;
+}
+
+.horario-comentario {
+    display: block;
+    margin-top: 9px;
+    color: #9a9a9a;
+    font-size: 11px;
 }
 
 .nome-comentario {
@@ -405,12 +414,18 @@ body {
 }
 
 .botao-desfazer,
+.botao-fontes,
 .botao-pausa {
     padding: 8px 13px;
     border: none;
     border-radius: 8px;
     font-size: 12px;
     cursor: pointer;
+}
+
+.botao-fontes {
+    background: #eeeeeb;
+    color: #68645f;
 }
 
 .botao-desfazer {
@@ -424,6 +439,7 @@ body {
     font-weight: 600;
 }
 
+.botao-fontes:hover,
 .botao-desfazer:hover {
     background: #e1ded9;
 }
@@ -433,26 +449,112 @@ body {
 }
 
 /* =====================================
+   JANELA DE FONTES
+===================================== */
+
+.janela-fontes {
+    width: min(560px, calc(100% - 32px));
+    max-height: 80vh;
+    padding: 18px 20px;
+    border: 1px solid #e7e2dc;
+    border-radius: 13px;
+    background: #ffffff;
+    color: #414750;
+    box-shadow: 0 12px 40px rgba(55, 48, 40, 0.25);
+    margin: auto;
+}
+
+.janela-fontes::backdrop {
+    background: rgba(40, 36, 32, 0.4);
+}
+
+.janela-fontes-cabecalho {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+}
+
+.janela-fontes-cabecalho h2 {
+    font-size: 16px;
+}
+
+.botao-fechar-fontes {
+    width: 28px;
+    height: 28px;
+    border: none;
+    border-radius: 8px;
+    background: #eeeeeb;
+    color: #68645f;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.lista-fontes {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 0;
+    list-style: none;
+}
+
+.item-fonte {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 12px;
+    border: 1px solid #e7e2dc;
+    border-radius: 10px;
+}
+
+.logo-fonte {
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.dados-fonte {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+    font-size: 13px;
+}
+
+.url-fonte {
+    color: #4778c7;
+    font-size: 12px;
+    word-break: break-all;
+}
+
+.dados-fonte small {
+    color: #9a9a9a;
+    font-size: 11px;
+}
+
+.fontes-vazia {
+    color: #858585;
+    font-size: 13px;
+}
+
+/* =====================================
    RESPONSIVIDADE
 ===================================== */
 
 @media (max-width: 650px) {
 
     .cabecalho {
-        min-height: 90px;
-        padding: 10px 55px;
+        min-height: 68px;
+        padding: 8px 55px;
+    }
+
+    .logo-cabecalho {
+        left: 10px;
+        max-height: 36px;
+        max-width: 110px;
     }
 
     .identificacao h1 {
         font-size: 26px;
-    }
-
-    .identificacao p {
-        font-size: 12px;
-    }
-
-    .botao-nova-transmissao {
-        right: 12px;
     }
 
     .barra-superior {
@@ -464,8 +566,8 @@ body {
         padding: 10px;
     }
 
-    .lista-comentarios {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+    .lista-comentarios,
+    .coluna-comentarios {
         gap: 9px;
     }
 

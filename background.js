@@ -535,6 +535,10 @@ chrome.runtime.onMessage.addListener(
                         // Guarda a aba que originou o comentário.
                         tabId: remetente.tab.id,
 
+                        // Página da aba, exibida na lista de fontes do painel.
+                        urlAba: remetente.tab.url || "",
+                        tituloAba: remetente.tab.title || "",
+
                         // Guarda o quadro correto, quando existir.
                         frameId: remetente.frameId
                     }

@@ -1,9 +1,15 @@
 
 {
     "manifest_version": 3,
-    "name": "LiveChat Central",
+    "name": "Comentários da Live – PES",
     "version": "2.3.0",
     "description": "Reúne comentários de transmissões ao vivo do YouTube e Facebook em um único painel.",
+    "icons": {
+        "16": "icons/icon.png",
+        "32": "icons/icon.png",
+        "48": "icons/icon.png",
+        "128": "icons/icon.png"
+    },
     "permissions": [
         "storage",
         "tabs"
@@ -17,7 +23,11 @@
         "service_worker": "background.js"
     },
     "action": {
-        "default_title": "Abrir LiveChat Central"
+        "default_title": "Abrir Comentários da Live – PES",
+        "default_icon": {
+            "16": "icons/icon.png",
+            "32": "icons/icon.png"
+        }
     },
     "content_scripts": [
         {
