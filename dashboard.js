@@ -362,7 +362,33 @@ function criarCartao(comentario) {
 
     texto.className = "texto-comentario";
 
-    texto.textContent = comentario.texto;
+    const temImagem = comentario.partes.some(p => p.tipo === "imagem");
+
+    if (temImagem) {
+
+        comentario.partes.forEach(parte => {
+
+            if (parte.tipo === "imagem") {
+
+                const imagem = document.createElement("img");
+
+                imagem.className = "emoji-comentario";
+                imagem.src = parte.src;
+                imagem.alt = parte.alt || "";
+                imagem.referrerPolicy = "no-referrer";
+
+                texto.appendChild(imagem);
+
+            } else {
+
+                texto.appendChild(document.createTextNode(parte.valor));
+            }
+        });
+
+    } else {
+
+        texto.textContent = comentario.texto;
+    }
 
     texto.style.fontSize = tamanhoFonte + "px";
 
@@ -388,9 +414,29 @@ function criarCartao(comentario) {
 
         horario.className = "horario-comentario";
 
-        horario.dateTime = new Date(comentario.recebidoEm).toISOString();
+        if (comentario.horarioPlataforma !== null) {
 
-        horario.textContent = formatarDataHora(comentario.recebidoEm);
+            const aproximado = comentario.origem === "facebook";
+
+            horario.dateTime =
+                new Date(comentario.horarioPlataforma).toISOString();
+
+            horario.textContent =
+                (aproximado ? "≈ " : "") +
+                formatarDataHora(comentario.horarioPlataforma, false);
+
+            horario.title = aproximado
+                ? "Horário aproximado, calculado a partir do tempo relativo do Facebook"
+                : "Horário exibido pelo YouTube";
+
+        } else {
+
+            horario.dateTime = new Date(comentario.recebidoEm).toISOString();
+
+            horario.textContent = formatarDataHora(comentario.recebidoEm);
+
+            horario.title = "Horário em que o painel recebeu o comentário";
+        }
 
         cartao.appendChild(horario);
     }
@@ -534,16 +580,19 @@ function abrirFontes() {
    FORMATAR DATA E HORA
 ===================================== */
 
-function formatarDataHora(timestamp) {
+function formatarDataHora(timestamp, comSegundos = true) {
 
-    return new Date(timestamp).toLocaleString("pt-BR", {
+    const opcoes = {
         day: "2-digit",
         month: "2-digit",
         year: "numeric",
         hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit"
-    });
+        minute: "2-digit"
+    };
+
+    if (comSegundos) opcoes.second = "2-digit";
+
+    return new Date(timestamp).toLocaleString("pt-BR", opcoes);
 }
 
 
@@ -573,6 +622,9 @@ function criarColunas() {
 ===================================== */
 
 function atualizarPainel() {
+
+    // Reconstruir a lista zera a rolagem: guardamos para restaurar.
+    const rolagem = listaComentarios.scrollTop;
 
     listaComentarios.innerHTML = "";
 
@@ -613,10 +665,42 @@ function atualizarPainel() {
     }
 
 
+    listaComentarios.scrollTop = rolagem;
+
     atualizarContadores();
     atualizarIndicadores();
     atualizarDesfazer();
     atualizarBotaoPausa();
+}
+
+
+/* =====================================
+   ADICIONAR UM CARTÃO NOVO
+   Evita reconstruir a lista inteira a cada
+   comentário, preservando a rolagem.
+===================================== */
+
+function adicionarCartao(comentario) {
+
+    const colunas = listaComentarios.querySelectorAll(
+        ".coluna-comentarios"
+    );
+
+    if (colunas.length !== 2) {
+        atualizarPainel();
+        return;
+    }
+
+    const cartao = criarCartao(comentario);
+
+    const indice =
+        colunas[0].offsetHeight <= colunas[1].offsetHeight ? 0 : 1;
+
+    colunas[indice].appendChild(cartao);
+
+    mensagemVazia.hidden = true;
+
+    atualizarContadores();
 }
 
 
@@ -674,10 +758,17 @@ function receberComentario(dados) {
 
         texto: texto,
 
+        // Texto e imagens (emojis personalizados), quando houver.
+        partes: Array.isArray(dados.partes) ? dados.partes : [],
+
         origem: origem,
 
-        // Momento em que o painel recebeu o comentário.
+        // Momento em que o painel recebeu o comentário (fallback).
         recebidoEm: Date.now(),
+
+        // Horário lido da própria plataforma, quando disponível.
+        horarioPlataforma:
+            typeof dados.horario === "number" ? dados.horario : null,
 
         podeExpandir: Boolean(dados.podeExpandir),
 
@@ -690,7 +781,7 @@ function receberComentario(dados) {
 
     comentarios.push(novoComentario);
 
-    atualizarPainel();
+    adicionarCartao(novoComentario);
 }
 
 
