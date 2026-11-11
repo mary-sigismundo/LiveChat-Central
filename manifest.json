@@ -35,6 +35,7 @@
                 "https://www.youtube.com/*"
             ],
             "js": [
+                "partes.js",
                 "youtube.js"
             ],
             "run_at": "document_idle",

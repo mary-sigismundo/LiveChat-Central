@@ -122,6 +122,56 @@ function gerarIdentificadorAlternativo(plataforma, nome, texto) {
 
 
 /* =====================================
+   VALIDAR HORÁRIO DA PLATAFORMA
+===================================== */
+
+function validarHorario(valor) {
+    if (typeof valor !== "number" || !Number.isFinite(valor)) {
+        return null;
+    }
+
+    const agora = Date.now();
+
+    // Rejeita horários no futuro (além de 5 min) ou com mais de 1 ano.
+    if (valor > agora + 5 * 60 * 1000) return null;
+    if (valor < agora - 365 * 24 * 60 * 60 * 1000) return null;
+
+    return valor;
+}
+
+
+/* =====================================
+   VALIDAR PARTES DA MENSAGEM
+===================================== */
+
+function validarPartes(valor) {
+    if (!Array.isArray(valor) || valor.length > 200) return [];
+
+    const partes = [];
+
+    for (const parte of valor) {
+        if (!parte || typeof parte !== "object") continue;
+
+        if (parte.tipo === "texto" && typeof parte.valor === "string") {
+            partes.push({ tipo: "texto", valor: parte.valor });
+        } else if (
+            parte.tipo === "imagem" &&
+            typeof parte.src === "string" &&
+            /^https:\/\//i.test(parte.src)
+        ) {
+            partes.push({
+                tipo: "imagem",
+                src: parte.src,
+                alt: typeof parte.alt === "string" ? parte.alt : ""
+            });
+        }
+    }
+
+    return partes;
+}
+
+
+/* =====================================
    REGISTRAR COMENTÁRIO
 ===================================== */
 
@@ -528,7 +578,11 @@ chrome.runtime.onMessage.addListener(
                         idFacebook: dados.idFacebook || "",
                         nome,
                         texto,
+                        partes: validarPartes(dados.partes),
                         origem: plataformaEsperada,
+
+                        // Horário lido da plataforma (ms), se for plausível.
+                        horario: validarHorario(dados.horario),
 
                         podeExpandir: Boolean(dados.podeExpandir),
 

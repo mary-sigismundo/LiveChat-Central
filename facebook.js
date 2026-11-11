@@ -287,6 +287,62 @@ function identificarId(comentario) {
     return "";
 }
 
+/*
+ * O Facebook mostra apenas tempos relativos ("há 5 minutos", "2 h").
+ * Converte para um horário aproximado, relativo ao momento da leitura.
+ * Retorna null quando não for possível interpretar.
+ */
+const UNIDADES_MS = [
+    [/^(segundo|second|seg|sec|s)s?\b/i, 1000],
+    [/^(minuto|minute|min|m)s?\b/i, 60 * 1000],
+    [/^(hora|hour|hr|h)s?\b/i, 60 * 60 * 1000],
+    [/^(dia|day|d)s?\b/i, 24 * 60 * 60 * 1000],
+    [/^(semana|week|sem|w)s?\b/i, 7 * 24 * 60 * 60 * 1000]
+];
+
+function converterTempoRelativo(quantidade, unidade) {
+    // Meses e anos não têm duração fixa: não estimamos.
+    if (/^(m[eê]s|month|ano|year|y)/i.test(unidade)) return null;
+
+    for (const [padrao, ms] of UNIDADES_MS) {
+        if (padrao.test(unidade)) {
+            return Date.now() - quantidade * ms;
+        }
+    }
+
+    // Meses e anos não têm duração fixa: não estimamos.
+    return null;
+}
+
+function lerHorario(elemento, rotulo) {
+    if (/\b(agora( mesmo)?|just now)\b/i.test(rotulo)) {
+        return Date.now();
+    }
+
+    // Ex.: "Comentário de Fulano há 5 minutos" / "... 5 minutes ago".
+    const m = rotulo.match(
+        /(?:h[áa]\s+)?(\d+)\s*([a-zA-Zçãáê]+)\.?(?:\s+(?:ago|atr[áa]s))?\s*$/i
+    );
+
+    if (m && (/^h[áa]\s/i.test(m[0]) || /(ago|atr[áa]s)\s*$/i.test(m[0]))) {
+        return converterTempoRelativo(Number(m[1]), m[2]);
+    }
+
+    // Alternativa: texto do link de horário do comentário ("5 min", "2 h").
+    for (const link of elemento.querySelectorAll("a[href]")) {
+        const t = (link.textContent || "").trim();
+        const r = t.match(/^(\d+)\s*([a-zA-Zçã]+)\.?$/);
+
+        if (r) {
+            const valor = converterTempoRelativo(Number(r[1]), r[2]);
+
+            if (valor !== null) return valor;
+        }
+    }
+
+    return null;
+}
+
 function obterDados(elemento) {
     const rotulo = elemento.getAttribute("aria-label") || "";
 
@@ -308,6 +364,7 @@ function obterDados(elemento) {
         nome,
         texto,
         idReal: identificarId(elemento),
+        horario: lerHorario(elemento, rotulo),
         podeExpandir: Boolean(botaoVerMais)
     };
 
@@ -383,6 +440,7 @@ function enviarComentario(item) {
                     idFacebook: dados.idReal || "",
                     nome: dados.nome,
                     texto: dados.texto,
+                    horario: dados.horario,
                     podeExpandir: dados.podeExpandir,
                     origem: "facebook"
                 }

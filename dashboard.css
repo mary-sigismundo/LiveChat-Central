@@ -280,6 +280,12 @@ body {
     color: #4778c7;
 }
 
+.emoji-comentario {
+    height: 1.4em;
+    width: auto;
+    vertical-align: middle;
+}
+
 .horario-comentario {
     display: block;
     margin-top: 9px;

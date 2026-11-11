@@ -91,6 +91,52 @@ function identificarId(elemento) {
     return "";
 }
 
+/*
+ * Lê o horário exibido pelo chat do YouTube (ex.: "14:32" ou "2:32 PM").
+ * O YouTube mostra só a hora do dia; a data é deduzida pelo relógio local.
+ * Retorna null quando não for possível interpretar.
+ */
+function lerHorario(elemento) {
+    const campo = elemento.querySelector("#timestamp");
+
+    if (!campo) return null;
+
+    const texto = (campo.textContent || "").trim();
+
+    // Replays mostram tempos negativos/relativos ao vídeo.
+    if (!texto || /^[-−–]/.test(texto)) return null;
+
+    const m = texto.match(/(\d{1,2}):(\d{2})(?::(\d{2}))?\s*([AaPp])?\.?[Mm]?/);
+
+    if (!m) return null;
+
+    let hora = Number(m[1]);
+    const minuto = Number(m[2]);
+    const segundo = m[3] ? Number(m[3]) : 0;
+
+    if (m[4]) {
+        const pm = m[4].toLowerCase() === "p";
+
+        if (hora < 1 || hora > 12) return null;
+
+        hora = (hora % 12) + (pm ? 12 : 0);
+    }
+
+    if (hora > 23 || minuto > 59 || segundo > 59) return null;
+
+    const agora = new Date();
+    const data = new Date(agora);
+
+    data.setHours(hora, minuto, segundo, 0);
+
+    // Passou da meia-noite: o horário lido é do dia anterior.
+    if (data.getTime() > agora.getTime() + 5 * 60 * 1000) {
+        data.setDate(data.getDate() - 1);
+    }
+
+    return data.getTime();
+}
+
 function lerComentario(elemento) {
     if (comentariosIdentificados.has(elemento)) return;
     if (!extensaoDisponivel()) return;
@@ -116,6 +162,8 @@ function lerComentario(elemento) {
                     id,
                     nome,
                     texto,
+                    partes: extrairPartes(mensagem),
+                    horario: lerHorario(elemento),
                     origem: "youtube"
                 }
             },
